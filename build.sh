@@ -87,9 +87,9 @@ act_compiler_proto() {
   for file in *; do
     if [ -d $file ]; then
     # echo "is dir"
-      if [ $file == *libs ];then
-        continue
-      fi
+      # if [ $file == *libs ];then
+      #   continue
+      # fi
       cd $file
       act_compiler_proto .
       cd ../
@@ -115,7 +115,9 @@ act_new() {
 }
 
 act_dev() {
-  consul agent -dev
+  consul agent -dev & \
+  micro api & \
+  micro web
 }
 
 check_cmd_or_exit go
