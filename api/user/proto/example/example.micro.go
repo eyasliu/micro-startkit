@@ -14,7 +14,7 @@ package api_user_api_user
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import go_api "proto/libs"
+import go_api "github.com/micro/go-api/proto"
 
 import (
 	context "context"

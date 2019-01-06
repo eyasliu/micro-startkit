@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+# set -x
 
 SCRIPTPATH=$(cd `dirname $0`; pwd)
 cd $SCRIPTPATH
@@ -96,7 +97,7 @@ act_compiler_proto() {
     else if [ $file == *.proto ];then
       pwd_path=`pwd -W`
       echo $pwd_path
-      protoc --proto_path=$SCRIPTPATH --go_out=$SCRIPTPATH --micro_out=$SCRIPTPATH $pwd_path/$file # TODO
+      protoc -I=$GOPATH/src -I=$SCRIPTPATH --proto_path=$SCRIPTPATH --go_out=$SCRIPTPATH --micro_out=$SCRIPTPATH $pwd_path/$file # TODO
       fi
     fi
   done
@@ -132,8 +133,8 @@ case "$1" in
     act_new $@
     ;;
   "preinstall")
-    go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
-    go get -u github.com/micro/protoc-gen-micro
+    go get -u -v github.com/golang/protobuf/{proto,protoc-gen-go}
+    go get -u -v github.com/micro/protoc-gen-micro
     act_install
   ;;
   "install")
