@@ -1,8 +1,11 @@
 #!/usr/bin/bash
 set -e
+# set -x
 
 SCRIPTPATH=$(cd `dirname $0`; pwd)
 cd $SCRIPTPATH
+
+namespace=go.micro
 
 # 检查命令
 check_cmd_or_exit() {
@@ -105,24 +108,56 @@ act_compiler_proto() {
 }
 
 act_new() {
-  micro new --gopath=false --namespace=eyasliu --type=$2 $3
-  cd $3
+  new_proj_path=$2/$3
+  micro new --gopath=false --namespace=$namespace --type=$2 $new_proj_path
+  cd $new_proj_path
   green_text "项目已生成，初始化模块..."
-  go mod init $3
+  go mod init $new_proj_path
   green_text "正在安装依赖..."
   go mod tidy
   go mod edit -require=github.com/golang/protobuf@1d3f30b51784bec5aad268e59fd3c2fc1c2fe73f # TODO: go mod 下载的版本有问题，以后应该会移除
+  # go mod download
   go mod download
+
+  # 增加项目别名
+  
+  echo -e "\n" >> go.mod
+  echo "require srv v0.0.1" >> go.mod
+  echo "replace srv v0.0.1 => ../../srv" >> go.mod
+  echo "replace api v0.0.1 => ../../api" >> go.mod
+
   green_text "正在编译 proto 文件"
   act_compiler_proto
   green_text "完成."
 }
 
 act_dev() {
+
+  HANDLERAPI=$2
+  HANDLERAPI=${HANDLERAPI:-$MICRO_API_HANDLER}
+  HANDLERAPI=${HANDLERAPI:-api}
+
   consul agent -dev & \
-  micro api & \
-  micro web
+  micro api --address 0.0.0.0:9000 --namespace $namespace.api --handler $HANDLERAPI & \
+  micro web --address 0.0.0.0:9001 --namespace $namespace
 }
+
+# kill_proc() {
+
+#   # tasklist | grep $1 | grep -v grep | cut -c 20-35 | xargs kill -s 9
+# }
+
+# act_dev_kill() {
+#   # kill_proc consul.exe
+#   if [ "$(expr substr $(uname -s) 1 4)" == "MSYS" ];then
+#     # start scripts/devkill.bat
+#     # cmd
+#     # TASKKILL \/?
+#     start "" . /B /I "TASKKILL \/IM micro.exe \/T \/F"
+#     # start "" /D . /I TASKKILL \/IM consul.exe \/T \/F
+    
+#   fi
+# }
 
 # 检查依赖项
 check_cmd_or_exit go
@@ -149,7 +184,10 @@ case "$1" in
     act_compiler_proto
     ;;
   "dev")
-    act_dev
+    act_dev $@
+    ;;
+  "dev:kill")
+    act_dev_kill
     ;;
   *)
     help_demo
