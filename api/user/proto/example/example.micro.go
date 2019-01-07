@@ -2,14 +2,14 @@
 // source: api/user/proto/example/example.proto
 
 /*
-Package api_user_api_user is a generated protocol buffer package.
+Package eyasliu_api_user is a generated protocol buffer package.
 
 It is generated from these files:
 	api/user/proto/example/example.proto
 
 It has these top-level messages:
 */
-package api_user_api_user
+package eyasliu_api_user
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
@@ -55,7 +55,7 @@ func NewExampleService(name string, c client.Client) ExampleService {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
-		name = "api.user.api.user"
+		name = "eyasliu.api.user"
 	}
 	return &exampleService{
 		c:    c,

@@ -5,7 +5,7 @@ This is the User service
 Generated with
 
 ```
-micro new api/user --namespace=api.user --type=api
+micro new api/user --namespace=eyasliu --type=api
 ```
 
 ## Getting Started
@@ -16,7 +16,7 @@ micro new api/user --namespace=api.user --type=api
 
 ## Configuration
 
-- FQDN: api.user.api.user
+- FQDN: eyasliu.api.user
 - Type: api
 - Alias: user
 

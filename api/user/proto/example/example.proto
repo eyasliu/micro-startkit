@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package api.user.api.user;
+package eyasliu.api.user;
 
 import "github.com/micro/go-api/proto/api.proto";
 

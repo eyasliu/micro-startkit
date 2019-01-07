@@ -67,8 +67,7 @@ TIPS:
 
 遍历所有目录的 .proto 文件，并编译成 go 和 micro 的包
 
-1. 会忽略 libs 下的 .proto 文件，把您不想要编译的 proto 文件放到 libs 下即可
-2. proto 的根路径会设置为 build.sh 的当前目录路径
+1. proto 的导入路径会设置为 build.sh 的当前目录路径和 $GOPATH/src
 
 
 **./build.sh dev**

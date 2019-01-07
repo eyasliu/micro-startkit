@@ -30,7 +30,7 @@ func (e *Example) Call(ctx context.Context, req *api.Request, rsp *api.Response)
 	// extract the client from the context
 	exampleClient, ok := client.ExampleFromContext(ctx)
 	if !ok {
-		return errors.InternalServerError("api.user.api.user.example.call", "example client not found")
+		return errors.InternalServerError("eyasliu.api.user.example.call", "example client not found")
 	}
 
 	// make request
@@ -38,7 +38,7 @@ func (e *Example) Call(ctx context.Context, req *api.Request, rsp *api.Response)
 		Name: extractValue(req.Post["name"]),
 	})
 	if err != nil {
-		return errors.InternalServerError("api.user.api.user.example.call", err.Error())
+		return errors.InternalServerError("eyasliu.api.user.example.call", err.Error())
 	}
 
 	b, _ := json.Marshal(response)

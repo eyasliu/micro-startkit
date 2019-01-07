@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# set -x
+set -e
 
 SCRIPTPATH=$(cd `dirname $0`; pwd)
 cd $SCRIPTPATH
@@ -43,7 +43,7 @@ USAGE:
   ./build.sh <command>
 
 COMMANDS:
-  new <类型> <服务名> <相对地址>  生成一个新服务，类型: api,web,srv,fnc
+  new <类型> <相对地址>          生成一个新服务，类型: api,web,srv,fnc
   preinstall                    安装全局项目依赖包
   install                       安装go依赖
   protoc                        编译所有项目的proto文件
@@ -51,7 +51,7 @@ COMMANDS:
   help                          打印帮助信息
 
 EXAMPLE:
-  ./build.sh new api api.user api/user  # 在目录 api/user 生成一个 api 类型的服务，服务名是 api.user
+  ./build.sh new api api/user  # 在目录 api/user 生成一个 api 类型的服务，服务名是 api.user
 
 TIPS:
   1. 第一次运行前的需要安装依赖工具环境，安装完成后先执行一遍
@@ -96,20 +96,23 @@ act_compiler_proto() {
       cd ../
     else if [ $file == *.proto ];then
       pwd_path=`pwd -W`
-      echo $pwd_path
-      protoc -I=$GOPATH/src -I=$SCRIPTPATH --proto_path=$SCRIPTPATH --go_out=$SCRIPTPATH --micro_out=$SCRIPTPATH $pwd_path/$file # TODO
+      echo -e $pwd_path/$file "...\c"
+      protoc -I=$GOPATH/src -I=. -I=$SCRIPTPATH --proto_path=$SCRIPTPATH --go_out=$SCRIPTPATH --micro_out=$SCRIPTPATH $pwd_path/$file # TODO
+      green_text " 完成"
       fi
     fi
   done
 }
 
 act_new() {
-  micro new --gopath=false --namespace=$3 --type=$2 $4
-  cd $4
+  micro new --gopath=false --namespace=eyasliu --type=$2 $3
+  cd $3
   green_text "项目已生成，初始化模块..."
-  go mod init $4
+  go mod init $3
   green_text "正在安装依赖..."
   go mod tidy
+  go mod edit -require=github.com/golang/protobuf@1d3f30b51784bec5aad268e59fd3c2fc1c2fe73f # TODO: go mod 下载的版本有问题，以后应该会移除
+  go mod download
   green_text "正在编译 proto 文件"
   act_compiler_proto
   green_text "完成."
@@ -121,6 +124,7 @@ act_dev() {
   micro web
 }
 
+# 检查依赖项
 check_cmd_or_exit go
 check_cmd_or_exit docker
 check_cmd_or_exit micro
@@ -133,8 +137,9 @@ case "$1" in
     act_new $@
     ;;
   "preinstall")
-    go get -u -v github.com/golang/protobuf/{proto,protoc-gen-go}
-    go get -u -v github.com/micro/protoc-gen-micro
+    go get -v github.com/golang/protobuf/{proto,protoc-gen-go}
+    go get -v github.com/micro/protoc-gen-micro
+    go get -v github.com/micro/go-api
     act_install
   ;;
   "install")

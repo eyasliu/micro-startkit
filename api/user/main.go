@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/micro/go-log"
+	log "github.com/micro/go-log"
 
-	"github.com/micro/go-micro"
-	"api/user/handler"
 	"api/user/client"
+	"api/user/handler"
+
+	micro "github.com/micro/go-micro"
 
 	example "api/user/proto/example"
 )
@@ -13,7 +14,7 @@ import (
 func main() {
 	// New Service
 	service := micro.NewService(
-		micro.Name("api.user.api.user"),
+		micro.Name("eyasliu.api.user"),
 		micro.Version("latest"),
 	)
 
